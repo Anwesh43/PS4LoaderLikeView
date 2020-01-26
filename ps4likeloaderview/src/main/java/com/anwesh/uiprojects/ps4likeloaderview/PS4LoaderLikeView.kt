@@ -37,6 +37,7 @@ fun Canvas.drawTriangle(size : Float, paint : Paint) {
     path.moveTo(-size, size)
     path.lineTo(size, size)
     path.lineTo(0f, -size)
+    path.lineTo(-size, size)
     drawPath(path, paint)
 }
 
@@ -53,7 +54,7 @@ fun Canvas.drawCross(size : Float, paint : Paint) {
     rotate(crossDeg)
     for (j in 0..1) {
         save()
-        rotate(90f)
+        rotate(plusDeg * j)
         drawLine(0f, -size, 0f, size, paint)
         restore()
     }
@@ -81,6 +82,9 @@ fun Canvas.getShapeDrawArray() : Array<(Float, Paint) -> Unit> {
 fun Canvas.drawShape(size : Float, scale : Float, paint : Paint) {
     val scDiv : Double = 1.0 / shapes
     val i : Int = Math.floor(scale / scDiv).toInt()
+    if (i == shapes) {
+        return
+    }
     val sf : Float = scale.divideScale(i, shapes).sinify()
     val newSize : Float = size * sf
     save()
@@ -99,6 +103,7 @@ fun Canvas.drawPS4Node(i : Int, scale : Float, paint : Paint) {
     paint.strokeCap = Paint.Cap.ROUND
     save()
     translate(w / 2, gap * (i + 1))
+    paint.style = Paint.Style.STROKE
     drawShape(size, scale, paint)
     restore()
 }
