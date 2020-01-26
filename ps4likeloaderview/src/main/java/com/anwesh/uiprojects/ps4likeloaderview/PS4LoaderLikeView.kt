@@ -22,9 +22,81 @@ val foreColor : Int = Color.parseColor("#BDBDBD")
 val backColor : Int = Color.parseColor("#0D47A1")
 val delay : Long = 20
 val strokeFactor : Float = 90f
+val crossDeg : Float = 45f
+val plusDeg : Float = 90f
+val fullDeg : Float = 360f
 
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse()) // -> curr point which we are animating.
 fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n)) * n // -> the ith part
 fun Float.sinify() : Float = Math.sin(this * Math.PI).toFloat()
+
+fun Canvas.drawTriangle(size : Float, paint : Paint) {
+    val path : Path = Path()
+    path.moveTo(-size, size)
+    path.lineTo(size, size)
+    path.lineTo(0f, -size)
+    drawPath(path, paint)
+}
+
+fun Canvas.drawSquare(size : Float, paint : Paint) {
+    drawRect(RectF(-size, -size, size, size), paint)
+}
+
+fun Canvas.drawCircle(size : Float, paint : Paint) {
+    drawCircle(0f, 0f, size, paint)
+}
+
+fun Canvas.drawCross(size : Float, paint : Paint) {
+    save()
+    rotate(crossDeg)
+    for (j in 0..1) {
+        save()
+        rotate(90f)
+        drawLine(0f, -size, 0f, size, paint)
+        restore()
+    }
+    restore()
+}
+
+fun Canvas.getShapeDrawArray() : Array<(Float, Paint) -> Unit> {
+
+    val drawSqFn : (Float, Paint) -> Unit = {size, paint ->
+        drawSquare(size, paint)
+    }
+    val drawTriangleFn : (Float, Paint) -> Unit = {size, paint ->
+        drawSquare(size, paint)
+    }
+    val drawCrossFn : (Float, Paint) -> Unit = {size, paint ->
+        drawCross(size, paint)
+    }
+    val drawCircleFn : (Float, Paint) -> Unit = {size, paint ->
+        drawCircle(size, paint)
+    }
+    return arrayOf(drawSqFn, drawTriangleFn, drawCircleFn, drawCircleFn)
+}
+
+
+fun Canvas.drawShape(size : Float, scale : Float, paint : Paint) {
+    val scDiv : Double = 1.0 / shapes
+    val i : Int = Math.floor(scale / scDiv).toInt()
+    val sf : Float = scale.divideScale(i, shapes).sinify()
+    val newSize : Float = size * sf
+    save()
+    rotate(fullDeg * newSize)
+    getShapeDrawArray()[i]
+    restore()
+}
+
+fun Canvas.drawPS4Node(i : Int, scale : Float, paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val gap : Float = h / (nodes + 1)
+    paint.color = foreColor
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
+    paint.strokeCap = Paint.Cap.ROUND
+    save()
+    translate(w / 2, gap * (i + 1))
+    restore()
+}
