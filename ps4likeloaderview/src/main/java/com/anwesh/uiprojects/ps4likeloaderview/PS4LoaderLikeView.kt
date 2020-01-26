@@ -100,3 +100,21 @@ fun Canvas.drawPS4Node(i : Int, scale : Float, paint : Paint) {
     translate(w / 2, gap * (i + 1))
     restore()
 }
+
+class PS4LoaderLikeView(ctx : Context) : View(ctx) {
+
+    private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    override fun onDraw(canvas : Canvas) {
+
+    }
+
+    override fun onTouchEvent(event : MotionEvent) : Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+
+            }
+        }
+        return true
+    }
+}
