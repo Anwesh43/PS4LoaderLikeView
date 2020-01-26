@@ -138,7 +138,7 @@ class PS4LoaderLikeView(ctx : Context) : View(ctx) {
         }
     }
 
-    data class Animator(var view : View, var animated : Boolean) {
+    data class Animator(var view : View, var animated : Boolean = false) {
 
         fun animate(cb : () -> Unit) {
             if (animated) {
@@ -227,6 +227,28 @@ class PS4LoaderLikeView(ctx : Context) : View(ctx) {
 
         fun startUpdating(cb : () -> Unit) {
             curr.startUpdating(cb)
+        }
+    }
+
+    data class Renderer(var view : PS4LoaderLikeView) {
+
+        private val animator : Animator = Animator(view)
+        private val ps4Shape : PS4Shapes = PS4Shapes(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            ps4Shape.draw(canvas, paint)
+            animator.animate {
+                ps4Shape.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            ps4Shape.startUpdating {
+                animator.start()
+            }
         }
     }
 }
