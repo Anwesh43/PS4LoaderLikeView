@@ -165,4 +165,45 @@ class PS4LoaderLikeView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    data class PS4Node(var i : Int, val state : State = State()) {
+
+        private var next : PS4Node? = null
+        private var prev : PS4Node? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = PS4Node(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawPS4Node(i, state.scale, paint)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            state.update(cb)
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : PS4Node {
+            var curr : PS4Node? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
+        }
+    }
 }
