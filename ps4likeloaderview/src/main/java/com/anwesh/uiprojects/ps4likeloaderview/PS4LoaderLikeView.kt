@@ -66,7 +66,7 @@ fun Canvas.getShapeDrawArray() : Array<(Float, Paint) -> Unit> {
         drawSquare(size, paint)
     }
     val drawTriangleFn : (Float, Paint) -> Unit = {size, paint ->
-        drawSquare(size, paint)
+        drawTriangle(size, paint)
     }
     val drawCrossFn : (Float, Paint) -> Unit = {size, paint ->
         drawCross(size, paint)
@@ -74,7 +74,7 @@ fun Canvas.getShapeDrawArray() : Array<(Float, Paint) -> Unit> {
     val drawCircleFn : (Float, Paint) -> Unit = {size, paint ->
         drawCircle(size, paint)
     }
-    return arrayOf(drawSqFn, drawTriangleFn, drawCircleFn, drawCircleFn)
+    return arrayOf(drawSqFn, drawTriangleFn, drawCrossFn, drawCircleFn)
 }
 
 
@@ -84,8 +84,8 @@ fun Canvas.drawShape(size : Float, scale : Float, paint : Paint) {
     val sf : Float = scale.divideScale(i, shapes).sinify()
     val newSize : Float = size * sf
     save()
-    rotate(fullDeg * newSize)
-    getShapeDrawArray()[i]
+    rotate(fullDeg * sf)
+    getShapeDrawArray()[i](newSize, paint)
     restore()
 }
 
@@ -93,11 +93,13 @@ fun Canvas.drawPS4Node(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val gap : Float = h / (nodes + 1)
+    val size : Float = gap / sizeFactor
     paint.color = foreColor
     paint.strokeWidth = Math.min(w, h) / strokeFactor
     paint.strokeCap = Paint.Cap.ROUND
     save()
     translate(w / 2, gap * (i + 1))
+    drawShape(size, scale, paint)
     restore()
 }
 
