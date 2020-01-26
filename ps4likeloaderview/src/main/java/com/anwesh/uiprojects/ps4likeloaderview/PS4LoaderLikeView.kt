@@ -251,4 +251,13 @@ class PS4LoaderLikeView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : PS4LoaderLikeView {
+            val view : PS4LoaderLikeView = PS4LoaderLikeView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
