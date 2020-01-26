@@ -22,3 +22,9 @@ val foreColor : Int = Color.parseColor("#BDBDBD")
 val backColor : Int = Color.parseColor("#0D47A1")
 val delay : Long = 20
 val strokeFactor : Float = 90f
+
+
+fun Int.inverse() : Float = 1f / this
+fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse()) // -> curr point which we are animating.
+fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n)) * n // -> the ith part
+fun Float.sinify() : Float = Math.sin(this * Math.PI).toFloat()
